@@ -29,8 +29,9 @@ namespace FaceDetection
         List<string> label = new List<string>();
         List<string> user = new List<string>();
         int count, numLabels, t;
-        string name, names = null;
+        string name = "" , names = null;
         private Dictionary<int, string> labelMap = new Dictionary<int, string>();
+        double confidenceThreshold = 5000.0;
 
         public FaceDetection()
         {
@@ -39,7 +40,7 @@ namespace FaceDetection
             string haarcascadePath = Path.Combine(Application.StartupPath, "haarcascade_frontalface_default.xml");
             faceDetected = new CascadeClassifier(haarcascadePath);
             //LoadTrainingData();
-
+            
             try
             {
                 string labelsInfoPath = Path.Combine(Application.StartupPath, "Faces", "Faces.txt");
@@ -86,12 +87,12 @@ namespace FaceDetection
 
         private void imgbWebcam_Click(object sender, EventArgs e)
         {
-
+            
         }
 
         private void btnSave_Click(object sender, EventArgs e)
         {
-            
+
             try
             {
                 count++;
@@ -100,7 +101,6 @@ namespace FaceDetection
                 var grayFace = frame.Convert<Gray, byte>();
                 var detectedFaces = faceDetected.DetectMultiScale(grayFace, 1.2, 10, new Size(20, 20), Size.Empty);
 
-                Image<Gray, byte> trainedFace = null;
                 foreach (var f in detectedFaces)
                 {
                     trainedFace = frame.Copy(f).Convert<Gray, byte>().Resize(100, 100, Inter.Cubic);
@@ -122,7 +122,7 @@ namespace FaceDetection
                         trainingImg[i - 1].Save(faceFilePath);
                         File.AppendAllText(Path.Combine(facesPath, "Faces.txt"), label[i - 1] + ",");
                     }
-
+                    imgbShow.Image = trainedFace;
                     MessageBox.Show(txtName.Text + " Added Successfully");
                 }
                 else
@@ -144,14 +144,30 @@ namespace FaceDetection
             Application.Idle += new EventHandler(FrameProcedure);
         }
 
+        private void txtThreshold_TextChanged(object sender, EventArgs e)
+        {
+            if (txtThreshold.Text == "")
+            {
+                txtThreshold.Text = ""+5;
+                txtThreshold.SelectAll();
+            }
+            else
+            {
+                confidenceThreshold = (double.Parse(txtThreshold.Text) * 1000.0);
+
+            }
+        }
+
         private void FrameProcedure(object sender, EventArgs e)
         {
             user.Add("");
-//wtf all this
+            //wtf all this
+            string name = "Unknown";
             Mat matFrame = cam.QueryFrame();
             frame = matFrame.ToImage<Bgr, byte>().Resize(320, 240, Inter.Cubic);
             grayFace = frame.Convert<Gray, byte>();
-            var facesDetectedNow = faceDetected.DetectMultiScale(grayFace, 1.2, 10, new Size(20, 20), Size.Empty);
+            //var facesDetectedNow = faceDetected.DetectMultiScale(grayFace, 1.3, 15, new Size(20, 20), DefaultSize);
+            var facesDetectedNow = faceDetected.DetectMultiScale(grayFace, 1.1, 10, new Size(20, 20), Size.Empty);
             foreach (var f in facesDetectedNow)
             {
                 result = frame.Copy(f).Convert<Gray, byte>().Resize(100, 100, Inter.Cubic);
@@ -164,29 +180,34 @@ namespace FaceDetection
                     var predictionResult = recognizer.Predict(result);
                     var predictedLabel = predictionResult.Label;
                     //name = labelMap.ContainsKey(predictedLabel) ? labelMap[predictedLabel] : "Unknown";
-                    if (labelMap.ContainsKey(predictedLabel))
-                    {
-                        name = labelMap[predictedLabel];
-                    }
-                    else
-                    {
-                        name = "Unknown";
-                    }
-                    //CvInvoke.PutText(frame, name, new Point(f.X - 2, f.Y - 2), FontFace.HersheyTriplex, 0.6, new MCvScalar(0, 0, 255), 1);
+                        if (predictionResult.Distance < confidenceThreshold)
+                        {
+                            if (labelMap.ContainsKey(predictedLabel))
+                            {
+                                name = labelMap[predictedLabel];
+                            }
+                            else
+                            {
+                                name = "Unknown";
+                            }
+                        }
+                    CvInvoke.PutText(frame, name, new Point(f.X - 2, f.Y - 2), FontFace.HersheyTriplex, 0.6, new MCvScalar(0, 0, 255), 1);
 
                 }
                 else
                 {
                     name = "Unknown";
-                    //CvInvoke.PutText(frame, "Unknown", new Point(f.X - 2, f.Y - 2), FontFace.HersheyTriplex, 0.6, new MCvScalar(0, 0, 255), 1);
+                    CvInvoke.PutText(frame, name, new Point(f.X - 2, f.Y - 2), FontFace.HersheyTriplex, 0.6, new MCvScalar(0, 0, 255), 1);
                 }
-                CvInvoke.PutText(frame, name, new Point(f.X - 2, f.Y - 2), FontFace.HersheyTriplex, 0.6, new MCvScalar(0, 0, 255), 1);
+                //CvInvoke.PutText(frame, name, new Point(f.X - 2, f.Y - 2), FontFace.HersheyTriplex, 0.6, new MCvScalar(0, 0, 255), 1);
                 user.Add("");
             }
             imgbWebcam.Image = frame;
             name = "";
             user.Clear();
         }
+
+
         private List<int> ConvertLabelsToInts(List<string> labels)
         {
             var labelMapReverse = new Dictionary<string, int>();

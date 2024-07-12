@@ -34,12 +34,17 @@
             this.btnSave = new System.Windows.Forms.Button();
             this.txtName = new System.Windows.Forms.TextBox();
             this.label1 = new System.Windows.Forms.Label();
+            this.imgbShow = new Emgu.CV.UI.ImageBox();
+            this.label2 = new System.Windows.Forms.Label();
+            this.txtThreshold = new System.Windows.Forms.TextBox();
+            this.label3 = new System.Windows.Forms.Label();
             ((System.ComponentModel.ISupportInitialize)(this.imgbWebcam)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.imgbShow)).BeginInit();
             this.SuspendLayout();
             // 
             // btnStart
             // 
-            this.btnStart.Location = new System.Drawing.Point(942, 156);
+            this.btnStart.Location = new System.Drawing.Point(902, 12);
             this.btnStart.Name = "btnStart";
             this.btnStart.Size = new System.Drawing.Size(124, 63);
             this.btnStart.TabIndex = 3;
@@ -49,16 +54,17 @@
             // 
             // imgbWebcam
             // 
+            this.imgbWebcam.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
             this.imgbWebcam.Location = new System.Drawing.Point(12, 12);
             this.imgbWebcam.Name = "imgbWebcam";
-            this.imgbWebcam.Size = new System.Drawing.Size(822, 648);
+            this.imgbWebcam.Size = new System.Drawing.Size(773, 596);
             this.imgbWebcam.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
             this.imgbWebcam.TabIndex = 2;
             this.imgbWebcam.TabStop = false;
             // 
             // btnSave
             // 
-            this.btnSave.Location = new System.Drawing.Point(942, 346);
+            this.btnSave.Location = new System.Drawing.Point(897, 203);
             this.btnSave.Name = "btnSave";
             this.btnSave.Size = new System.Drawing.Size(124, 41);
             this.btnSave.TabIndex = 4;
@@ -68,7 +74,7 @@
             // 
             // txtName
             // 
-            this.txtName.Location = new System.Drawing.Point(913, 263);
+            this.txtName.Location = new System.Drawing.Point(871, 167);
             this.txtName.Name = "txtName";
             this.txtName.Size = new System.Drawing.Size(169, 30);
             this.txtName.TabIndex = 5;
@@ -76,17 +82,57 @@
             // label1
             // 
             this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(863, 266);
+            this.label1.Location = new System.Drawing.Point(821, 170);
             this.label1.Name = "label1";
             this.label1.Size = new System.Drawing.Size(44, 24);
             this.label1.TabIndex = 6;
             this.label1.Text = "Name";
             // 
+            // imgbShow
+            // 
+            this.imgbShow.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.imgbShow.Location = new System.Drawing.Point(818, 282);
+            this.imgbShow.Name = "imgbShow";
+            this.imgbShow.Size = new System.Drawing.Size(287, 283);
+            this.imgbShow.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
+            this.imgbShow.TabIndex = 7;
+            this.imgbShow.TabStop = false;
+            // 
+            // label2
+            // 
+            this.label2.AutoSize = true;
+            this.label2.Location = new System.Drawing.Point(926, 255);
+            this.label2.Name = "label2";
+            this.label2.Size = new System.Drawing.Size(74, 24);
+            this.label2.TabIndex = 8;
+            this.label2.Text = "Face save";
+            // 
+            // txtThreshold
+            // 
+            this.txtThreshold.Location = new System.Drawing.Point(871, 107);
+            this.txtThreshold.Name = "txtThreshold";
+            this.txtThreshold.Size = new System.Drawing.Size(169, 30);
+            this.txtThreshold.TabIndex = 9;
+            this.txtThreshold.TextChanged += new System.EventHandler(this.txtThreshold_TextChanged);
+            // 
+            // label3
+            // 
+            this.label3.AutoSize = true;
+            this.label3.Location = new System.Drawing.Point(798, 113);
+            this.label3.Name = "label3";
+            this.label3.Size = new System.Drawing.Size(67, 24);
+            this.label3.TabIndex = 10;
+            this.label3.Text = "Threshold";
+            // 
             // FaceDetection
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 24F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(1117, 664);
+            this.ClientSize = new System.Drawing.Size(1117, 614);
+            this.Controls.Add(this.label3);
+            this.Controls.Add(this.txtThreshold);
+            this.Controls.Add(this.label2);
+            this.Controls.Add(this.imgbShow);
             this.Controls.Add(this.label1);
             this.Controls.Add(this.txtName);
             this.Controls.Add(this.btnSave);
@@ -98,6 +144,7 @@
             this.Text = "Form1";
             this.Load += new System.EventHandler(this.Form1_Load);
             ((System.ComponentModel.ISupportInitialize)(this.imgbWebcam)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.imgbShow)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -109,6 +156,10 @@
         private System.Windows.Forms.Button btnSave;
         private System.Windows.Forms.TextBox txtName;
         private System.Windows.Forms.Label label1;
+        private Emgu.CV.UI.ImageBox imgbShow;
+        private System.Windows.Forms.Label label2;
+        private System.Windows.Forms.TextBox txtThreshold;
+        private System.Windows.Forms.Label label3;
     }
 }
 
