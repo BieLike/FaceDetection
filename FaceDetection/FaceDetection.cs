@@ -19,7 +19,7 @@ namespace FaceDetection
     public partial class FaceDetection : Form
     {
 //list
-        CascadeClassifier faceDetected;
+        CascadeClassifier faceDetected, EyeDetected;
         Image<Bgr, byte> frame;
         VideoCapture cam;
         Image<Gray, byte> result;
@@ -38,6 +38,8 @@ namespace FaceDetection
             InitializeComponent();
 //HaarCascade,haar.xml
             string haarcascadePath = Path.Combine(Application.StartupPath, "haarcascade_frontalface_default.xml");
+            string haarEyes = Path.Combine(Application.StartupPath, "haarcascade_eye.xml");
+            EyeDetected = new CascadeClassifier(haarEyes);
             faceDetected = new CascadeClassifier(haarcascadePath);
             //LoadTrainingData();
             
@@ -162,18 +164,28 @@ namespace FaceDetection
         {
             user.Add("");
             //wtf all this
-            string name = "Unknown";
+            string name = "";
             Mat matFrame = cam.QueryFrame();
             frame = matFrame.ToImage<Bgr, byte>().Resize(320, 240, Inter.Cubic);
             grayFace = frame.Convert<Gray, byte>();
             //var facesDetectedNow = faceDetected.DetectMultiScale(grayFace, 1.3, 15, new Size(20, 20), DefaultSize);
-            var facesDetectedNow = faceDetected.DetectMultiScale(grayFace, 1.1, 10, new Size(20, 20), Size.Empty);
+            var facesDetectedNow = faceDetected.DetectMultiScale(grayFace, 1.1, 11, new Size(20, 20), Size.Empty);
             foreach (var f in facesDetectedNow)
             {
+                grayFace.ROI = f;
                 result = frame.Copy(f).Convert<Gray, byte>().Resize(100, 100, Inter.Cubic);
                 frame.Draw(f, new Bgr(Color.Green), 2);
+                Rectangle[] eyes = EyeDetected.DetectMultiScale(grayFace, 1.1, 11);
+                foreach (var eye in eyes)
+                {
+                    var ayy = eye;
+                    ayy.X += f.X;
+                    ayy.Y += f.Y;
+                    frame.Draw(ayy, new Bgr(0, 0, 255), 1);
+                }
                 if (trainingImg.Count != 0)
                 {
+                    
                     var termCriteria = new MCvTermCriteria(count, 0.001);
                     var recognizer = new EigenFaceRecognizer(trainingImg.Count, double.PositiveInfinity);
                     recognizer.Train(trainingImg.ToArray(), ConvertLabelsToInts(label).ToArray());
@@ -188,7 +200,7 @@ namespace FaceDetection
                             }
                             else
                             {
-                                name = "Unknown";
+                                name = "";
                             }
                         }
                     CvInvoke.PutText(frame, name, new Point(f.X - 2, f.Y - 2), FontFace.HersheyTriplex, 0.6, new MCvScalar(0, 0, 255), 1);
@@ -196,7 +208,7 @@ namespace FaceDetection
                 }
                 else
                 {
-                    name = "Unknown";
+                    name = "";
                     CvInvoke.PutText(frame, name, new Point(f.X - 2, f.Y - 2), FontFace.HersheyTriplex, 0.6, new MCvScalar(0, 0, 255), 1);
                 }
                 //CvInvoke.PutText(frame, name, new Point(f.X - 2, f.Y - 2), FontFace.HersheyTriplex, 0.6, new MCvScalar(0, 0, 255), 1);
