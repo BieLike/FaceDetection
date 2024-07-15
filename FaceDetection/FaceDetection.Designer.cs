@@ -38,8 +38,10 @@
             this.label2 = new System.Windows.Forms.Label();
             this.txtThreshold = new System.Windows.Forms.TextBox();
             this.label3 = new System.Windows.Forms.Label();
+            this.dgvChecked = new System.Windows.Forms.DataGridView();
             ((System.ComponentModel.ISupportInitialize)(this.imgbWebcam)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.imgbShow)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.dgvChecked)).BeginInit();
             this.SuspendLayout();
             // 
             // btnStart
@@ -57,7 +59,7 @@
             this.imgbWebcam.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
             this.imgbWebcam.Location = new System.Drawing.Point(12, 12);
             this.imgbWebcam.Name = "imgbWebcam";
-            this.imgbWebcam.Size = new System.Drawing.Size(773, 596);
+            this.imgbWebcam.Size = new System.Drawing.Size(766, 590);
             this.imgbWebcam.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
             this.imgbWebcam.TabIndex = 2;
             this.imgbWebcam.TabStop = false;
@@ -93,7 +95,7 @@
             this.imgbShow.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
             this.imgbShow.Location = new System.Drawing.Point(818, 282);
             this.imgbShow.Name = "imgbShow";
-            this.imgbShow.Size = new System.Drawing.Size(287, 283);
+            this.imgbShow.Size = new System.Drawing.Size(287, 258);
             this.imgbShow.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
             this.imgbShow.TabIndex = 7;
             this.imgbShow.TabStop = false;
@@ -124,11 +126,22 @@
             this.label3.TabIndex = 10;
             this.label3.Text = "Threshold";
             // 
+            // dgvChecked
+            // 
+            this.dgvChecked.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            this.dgvChecked.Location = new System.Drawing.Point(1126, 12);
+            this.dgvChecked.Name = "dgvChecked";
+            this.dgvChecked.RowHeadersWidth = 51;
+            this.dgvChecked.RowTemplate.Height = 24;
+            this.dgvChecked.Size = new System.Drawing.Size(392, 528);
+            this.dgvChecked.TabIndex = 11;
+            // 
             // FaceDetection
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 24F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(1117, 614);
+            this.ClientSize = new System.Drawing.Size(1530, 607);
+            this.Controls.Add(this.dgvChecked);
             this.Controls.Add(this.label3);
             this.Controls.Add(this.txtThreshold);
             this.Controls.Add(this.label2);
@@ -145,6 +158,7 @@
             this.Load += new System.EventHandler(this.Form1_Load);
             ((System.ComponentModel.ISupportInitialize)(this.imgbWebcam)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.imgbShow)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.dgvChecked)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -160,6 +174,7 @@
         private System.Windows.Forms.Label label2;
         private System.Windows.Forms.TextBox txtThreshold;
         private System.Windows.Forms.Label label3;
+        private System.Windows.Forms.DataGridView dgvChecked;
     }
 }
 

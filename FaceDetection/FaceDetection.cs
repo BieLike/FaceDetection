@@ -32,6 +32,7 @@ namespace FaceDetection
         string name = "" , names = null;
         private Dictionary<int, string> labelMap = new Dictionary<int, string>();
         double confidenceThreshold = 5000.0;
+        DataTable table = new DataTable();
 
         public FaceDetection()
         {
@@ -64,6 +65,15 @@ namespace FaceDetection
             {
                 MessageBox.Show("Nothing in the database");
             }
+
+            table.Columns.Add("Name",typeof(string));
+            table.Columns.Add("Date",typeof(string));
+            dgvChecked.DataSource = table;
+            dgvChecked.Columns[0].HeaderText = "Name";
+            dgvChecked.Columns[1].HeaderText = "Time";
+            dgvChecked.Columns[0].Width = 165;
+            dgvChecked.Columns[1].Width = 165;
+            dgvChecked.Refresh();
         }
 
         private void LoadTrainingData()
@@ -125,11 +135,17 @@ namespace FaceDetection
                         File.AppendAllText(Path.Combine(facesPath, "Faces.txt"), label[i - 1] + ",");
                     }
                     imgbShow.Image = trainedFace;
+                    imgbShow.Refresh();
                     MessageBox.Show(txtName.Text + " Added Successfully");
+
+                    trainedFace = null;
                 }
                 else
                 {
                     MessageBox.Show("No face detected. Please try again.");
+                    imgbShow.Image = null;
+                    imgbShow.Refresh();
+
                 }
             }
             catch (Exception ex)
@@ -163,6 +179,7 @@ namespace FaceDetection
         private void FrameProcedure(object sender, EventArgs e)
         {
             user.Add("");
+            int Same = 0, rc = dgvChecked.RowCount, i;
             //wtf all this
             string name = "";
             Mat matFrame = cam.QueryFrame();
@@ -202,7 +219,46 @@ namespace FaceDetection
                             {
                                 name = "";
                             }
+                    }
+                    for (i=0; i<rc; i++)
+                    {
+                        //string sname = dgvChecked.Rows[i].Cells[0].Value.ToString();
+                        if (!dgvChecked.Rows[i].IsNewRow)
+                        {
+                            var cellValue = dgvChecked.Rows[i].Cells[0].Value;
+
+                            // Check if the cell value is not null
+                            if (cellValue != null && name == cellValue.ToString())
+                            {
+                                if (rc == 1)
+                                {
+                                    Same = 0;
+                                }
+                                else if (name == dgvChecked.Rows[i].Cells[0].Value.ToString())
+                                {
+                                    Same = 1;
+                                }
+                                else
+                                {
+                                    Same = 0;
+                                }
+                            }
                         }
+                    }
+                    if (name == "")
+                    {
+                        dgvChecked.Refresh();
+                    }
+                    else if (Same == 1)
+                    {
+                        dgvChecked.Refresh();
+                    }
+                    else if(Same == 0)
+                    {
+                        table.Rows.Add(name, DateTime.Now.ToString("dd/MM/yyyy hh:mm:ss"));
+                        dgvChecked.DataSource = table;
+                        dgvChecked.Refresh();
+                    }
                     CvInvoke.PutText(frame, name, new Point(f.X - 2, f.Y - 2), FontFace.HersheyTriplex, 0.6, new MCvScalar(0, 0, 255), 1);
 
                 }
@@ -217,6 +273,8 @@ namespace FaceDetection
             imgbWebcam.Image = frame;
             name = "";
             user.Clear();
+            Same = 0;
+
         }
 
 
