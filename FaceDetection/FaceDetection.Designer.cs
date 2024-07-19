@@ -39,6 +39,7 @@
             this.txtThreshold = new System.Windows.Forms.TextBox();
             this.label3 = new System.Windows.Forms.Label();
             this.dgvChecked = new System.Windows.Forms.DataGridView();
+            this.label4 = new System.Windows.Forms.Label();
             ((System.ComponentModel.ISupportInitialize)(this.imgbWebcam)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.imgbShow)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.dgvChecked)).BeginInit();
@@ -46,12 +47,13 @@
             // 
             // btnStart
             // 
+            this.btnStart.BackColor = System.Drawing.Color.Red;
             this.btnStart.Location = new System.Drawing.Point(902, 12);
             this.btnStart.Name = "btnStart";
             this.btnStart.Size = new System.Drawing.Size(124, 63);
             this.btnStart.TabIndex = 3;
             this.btnStart.Text = "Start detection and recognise";
-            this.btnStart.UseVisualStyleBackColor = true;
+            this.btnStart.UseVisualStyleBackColor = false;
             this.btnStart.Click += new System.EventHandler(this.btnStart_Click);
             // 
             // imgbWebcam
@@ -66,12 +68,13 @@
             // 
             // btnSave
             // 
+            this.btnSave.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(128)))), ((int)(((byte)(255)))), ((int)(((byte)(128)))));
             this.btnSave.Location = new System.Drawing.Point(897, 203);
             this.btnSave.Name = "btnSave";
             this.btnSave.Size = new System.Drawing.Size(124, 41);
             this.btnSave.TabIndex = 4;
             this.btnSave.Text = "Save face";
-            this.btnSave.UseVisualStyleBackColor = true;
+            this.btnSave.UseVisualStyleBackColor = false;
             this.btnSave.Click += new System.EventHandler(this.btnSave_Click);
             // 
             // txtName
@@ -103,11 +106,11 @@
             // label2
             // 
             this.label2.AutoSize = true;
-            this.label2.Location = new System.Drawing.Point(926, 255);
+            this.label2.Location = new System.Drawing.Point(945, 255);
             this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(74, 24);
+            this.label2.Size = new System.Drawing.Size(39, 24);
             this.label2.TabIndex = 8;
-            this.label2.Text = "Face save";
+            this.label2.Text = "Face";
             // 
             // txtThreshold
             // 
@@ -129,18 +132,28 @@
             // dgvChecked
             // 
             this.dgvChecked.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            this.dgvChecked.Location = new System.Drawing.Point(1126, 12);
+            this.dgvChecked.Location = new System.Drawing.Point(1126, 48);
             this.dgvChecked.Name = "dgvChecked";
             this.dgvChecked.RowHeadersWidth = 51;
             this.dgvChecked.RowTemplate.Height = 24;
             this.dgvChecked.Size = new System.Drawing.Size(392, 528);
             this.dgvChecked.TabIndex = 11;
             // 
+            // label4
+            // 
+            this.label4.AutoSize = true;
+            this.label4.Location = new System.Drawing.Point(1295, 21);
+            this.label4.Name = "label4";
+            this.label4.Size = new System.Drawing.Size(64, 24);
+            this.label4.TabIndex = 12;
+            this.label4.Text = "Check in";
+            // 
             // FaceDetection
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 24F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(1530, 607);
+            this.Controls.Add(this.label4);
             this.Controls.Add(this.dgvChecked);
             this.Controls.Add(this.label3);
             this.Controls.Add(this.txtThreshold);
@@ -175,6 +188,7 @@
         private System.Windows.Forms.TextBox txtThreshold;
         private System.Windows.Forms.Label label3;
         private System.Windows.Forms.DataGridView dgvChecked;
+        private System.Windows.Forms.Label label4;
     }
 }
 

@@ -19,20 +19,18 @@ namespace FaceDetection
     public partial class FaceDetection : Form
     {
 //list
-        CascadeClassifier faceDetected, EyeDetected;
-        Image<Bgr, byte> frame;
-        VideoCapture cam;
-        Image<Gray, byte> result;
-        Image<Gray, byte> trainedFace = null;
-        Image<Gray, byte> grayFace = null;
-        List<Image<Gray, byte>> trainingImg = new List<Image<Gray, byte>>();
-        List<string> label = new List<string>();
-        List<string> user = new List<string>();
-        int count, numLabels, t;
-        string name = "" , names = null;
-        private Dictionary<int, string> labelMap = new Dictionary<int, string>();
-        double confidenceThreshold = 5000.0;
-        DataTable table = new DataTable();
+        CascadeClassifier faceDetected, EyeDetected;   //Variable to detect eyes and face
+        Image<Bgr, byte> frame;   //Variable to get colour image
+        VideoCapture cam;   //Variable to use the Webcam
+        Image<Gray, byte> trainedFace = null;   //Variable to save face
+        Image<Gray, byte> grayFace = null;   //Variable to make gray face picture
+        Image<Gray, byte> result;  //Variable to get grayFace picture
+        List<Image<Gray, byte>> trainingImg = new List<Image<Gray, byte>>();   //Variable to get face and name
+        List<string> label = new List<string>();   //Variable to get name
+        int count, numLabels;   //Variable to get number of face in folder
+        private Dictionary<int, string> labelMap = new Dictionary<int, string>();   //Map integer to name(string/label)
+        double confidenceThreshold = 2000.0;   //Threshold to make picture more accuracy
+        DataTable table = new DataTable();   //To make table list of checkin
 
         public FaceDetection()
         {
@@ -76,7 +74,7 @@ namespace FaceDetection
             dgvChecked.Refresh();
         }
 
-        private void LoadTrainingData()
+        /*private void LoadTrainingData()
         {
             try
             {
@@ -95,7 +93,7 @@ namespace FaceDetection
             {
                 MessageBox.Show("No data in the database or error in loading training data: " + ex.Message);
             }
-        }
+        }*/
 
         private void imgbWebcam_Click(object sender, EventArgs e)
         {
@@ -110,7 +108,7 @@ namespace FaceDetection
                 count++;
                 Mat matFrame = cam.QueryFrame();
                 var frame = matFrame.ToImage<Bgr, byte>().Resize(320, 240, Inter.Cubic);
-                var grayFace = frame.Convert<Gray, byte>();
+                grayFace = frame.Convert<Gray, byte>();
                 var detectedFaces = faceDetected.DetectMultiScale(grayFace, 1.2, 10, new Size(20, 20), Size.Empty);
 
                 foreach (var f in detectedFaces)
@@ -166,7 +164,7 @@ namespace FaceDetection
         {
             if (txtThreshold.Text == "")
             {
-                txtThreshold.Text = ""+5;
+                txtThreshold.Text = ""+2;
                 txtThreshold.SelectAll();
             }
             else
@@ -178,7 +176,6 @@ namespace FaceDetection
 
         private void FrameProcedure(object sender, EventArgs e)
         {
-            user.Add("");
             int Same = 0, rc = dgvChecked.RowCount, i;
             //wtf all this
             string name = "";
@@ -268,11 +265,9 @@ namespace FaceDetection
                     CvInvoke.PutText(frame, name, new Point(f.X - 2, f.Y - 2), FontFace.HersheyTriplex, 0.6, new MCvScalar(0, 0, 255), 1);
                 }
                 //CvInvoke.PutText(frame, name, new Point(f.X - 2, f.Y - 2), FontFace.HersheyTriplex, 0.6, new MCvScalar(0, 0, 255), 1);
-                user.Add("");
             }
             imgbWebcam.Image = frame;
             name = "";
-            user.Clear();
             Same = 0;
 
         }
