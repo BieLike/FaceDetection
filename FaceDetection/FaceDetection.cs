@@ -18,7 +18,6 @@ namespace FaceDetection
 {
     public partial class FaceDetection : Form
     {
-//list
         CascadeClassifier faceDetected, EyeDetected;   //Variable to detect eyes and face
         Image<Bgr, byte> frame;   //Variable to get colour image
         VideoCapture cam;   //Variable to use the Webcam
@@ -29,33 +28,33 @@ namespace FaceDetection
         List<string> label = new List<string>();   //Variable to get name
         int count, numLabels;   //Variable to get number of face in folder
         private Dictionary<int, string> labelMap = new Dictionary<int, string>();   //Map integer to name(string/label)
-        double confidenceThreshold = 2000.0;   //Threshold to make picture more accuracy
+        double confidenceThreshold = 2000.0;   //Threshold to make picture more accuracy when the light is not the same
         DataTable table = new DataTable();   //To make table list of checkin
+        //-Summary : define variable to use in method
 
         public FaceDetection()
         {
-            InitializeComponent();
-//HaarCascade,haar.xml
-            string haarcascadePath = Path.Combine(Application.StartupPath, "haarcascade_frontalface_default.xml");
-            string haarEyes = Path.Combine(Application.StartupPath, "haarcascade_eye.xml");
-            EyeDetected = new CascadeClassifier(haarEyes);
-            faceDetected = new CascadeClassifier(haarcascadePath);
-            //LoadTrainingData();
-            
+            InitializeComponent(); 
+            string haarFacePath = Path.Combine(Application.StartupPath, "haarcascade_frontalface_default.xml");   //Path to Haar face detect
+            string haarEyesPath = Path.Combine(Application.StartupPath, "haarcascade_eye.xml");   //Path for Haar eye detect
+            EyeDetected = new CascadeClassifier(haarEyesPath);   //Initialize eye detect path to access to the data
+            faceDetected = new CascadeClassifier(haarFacePath);   //Initialize face detect path to access to the data
+            //-Summary : define the path to access data
+
             try
             {
-                string labelsInfoPath = Path.Combine(Application.StartupPath, "Faces", "Faces.txt");
-                string Labelsinf = File.ReadAllText(labelsInfoPath);
-                string[] label2 = Labelsinf.Split(',');
-                numLabels = Convert.ToInt16(label2[0]);
-                count = numLabels;
-                string faceLoad;
+                string labelsInfoPath = Path.Combine(Application.StartupPath, "Faces", "Faces.txt");   //Define the path of face's name
+                string Labelsinf = File.ReadAllText(labelsInfoPath);   //Store all the name
+                string[] label2 = Labelsinf.Split(',');   //Split all the name into an array
+                numLabels = Convert.ToInt16(label2[0]);   //Convert string number of face to int
+                count = numLabels;   //Store number of face to use in another method
+                string faceLoad;   
                 for (int i=1; i<numLabels+1; i++)
                 {
-                    faceLoad = $"face{i}.bmp";
-                    string faceLoadPath = Path.Combine(Application.StartupPath, "Faces", faceLoad);
-                    trainingImg.Add(new Image<Gray, byte>(faceLoadPath));
-                    label.Add(label2[i]);
+                    faceLoad = $"face{i}.bmp";   //Create file name to access to the face number i
+                    string faceLoadPath = Path.Combine(Application.StartupPath, "Faces", faceLoad);   //Access to face Image
+                    trainingImg.Add(new Image<Gray, byte>(faceLoadPath));   //Add gray face to trainingImg list
+                    label.Add(label2[i]);   //Add name of face to label list
                 }
                 
             }
@@ -63,37 +62,16 @@ namespace FaceDetection
             {
                 MessageBox.Show("Nothing in the database");
             }
+            //-Summary : prepare name and face contain in the list
 
-            table.Columns.Add("Name",typeof(string));
-            table.Columns.Add("Date",typeof(string));
-            dgvChecked.DataSource = table;
-            dgvChecked.Columns[0].HeaderText = "Name";
-            dgvChecked.Columns[1].HeaderText = "Time";
-            dgvChecked.Columns[0].Width = 165;
-            dgvChecked.Columns[1].Width = 165;
+            table.Columns.Add("Name",typeof(string));   //Add Name column to table
+            table.Columns.Add("Time",typeof(string));   //Add Time column to table
+            dgvChecked.DataSource = table;   //Add table to DataGridView
+            dgvChecked.Columns[0].Width = 165;   //Set column[0] width
+            dgvChecked.Columns[1].Width = 165;   //Set column[1] width
             dgvChecked.Refresh();
+            //-Summary : create table for check in
         }
-
-        /*private void LoadTrainingData()
-        {
-            try
-            {
-                string labelsInfo = File.ReadAllText(Path.Combine(Application.StartupPath, "Faces", "Faces.txt"));
-                string[] labels = labelsInfo.Split(',');
-
-                count = Convert.ToInt32(labels[0]);
-                for (int i = 1; i <= count; i++)
-                {
-                    string faceFile = Path.Combine(Application.StartupPath, "Faces", $"face{i}.bmp");
-                    trainingImg.Add(new Image<Gray, byte>(faceFile));
-                    label.Add(labels[i]);
-                }
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show("No data in the database or error in loading training data: " + ex.Message);
-            }
-        }*/
 
         private void imgbWebcam_Click(object sender, EventArgs e)
         {
@@ -105,43 +83,44 @@ namespace FaceDetection
 
             try
             {
-                count++;
-                Mat matFrame = cam.QueryFrame();
-                var frame = matFrame.ToImage<Bgr, byte>().Resize(320, 240, Inter.Cubic);
-                grayFace = frame.Convert<Gray, byte>();
-                var detectedFaces = faceDetected.DetectMultiScale(grayFace, 1.2, 10, new Size(20, 20), Size.Empty);
+                count++;  //Number of face
+                Mat matFrame = cam.QueryFrame();   //Capture image of a frame on Webcam
+                var frame = matFrame.ToImage<Bgr, byte>().Resize(320, 240, Inter.Cubic);   //Convert to colour image and resize
+                grayFace = frame.Convert<Gray, byte>();   //Convert to gray image
+                var detectedFaces = faceDetected.DetectMultiScale(grayFace, 1.2/*How much img reduce*/, 5/*num of face detecting*/, new Size(20, 20), Size.Empty);   //Detect face in the grayscale by Haar
+                //-Summary : Define and prepare variable to use
 
                 foreach (var f in detectedFaces)
                 {
-                    trainedFace = frame.Copy(f).Convert<Gray, byte>().Resize(100, 100, Inter.Cubic);
-                    break;
+                    trainedFace = frame.Copy(f).Convert<Gray, byte>().Resize(100, 100, Inter.Cubic);   //Convert face image to gray and resize
+                    break;   //Ensure that only the first detected face is processeed
                 }
 
                 if (trainedFace != null)
                 {
-                    trainingImg.Add(trainedFace);
-                    label.Add(txtName.Text);
+                    trainingImg.Add(trainedFace);   //Add trainedFace to trainingImg list
+                    label.Add(txtName.Text);   //Add name to label list
 
-                    string facesPath = Path.Combine(Application.StartupPath, "Faces");
-                    Directory.CreateDirectory(facesPath);
-                    File.WriteAllText(Path.Combine(facesPath, "Faces.txt"), trainingImg.Count.ToString() + ",");
+                    string facesPath = Path.Combine(Application.StartupPath, "Faces");   //Path to save face
+                    Directory.CreateDirectory(facesPath);   //Create dictionary to saving face path because it more effiency
+                    File.WriteAllText(Path.Combine(facesPath, "Faces.txt"), trainingImg.Count.ToString() + ",");   //Write number of face in Faces.txt and add ,
 
                     for (int i = 1; i <= trainingImg.Count; i++)
                     {
-                        string faceFilePath = Path.Combine(facesPath, $"face{i}.bmp");
-                        trainingImg[i - 1].Save(faceFilePath);
-                        File.AppendAllText(Path.Combine(facesPath, "Faces.txt"), label[i - 1] + ",");
+                        string faceFilePath = Path.Combine(facesPath, $"face{i}.bmp");   //Path to save face
+                        trainingImg[i - 1].Save(faceFilePath);   //Add face of i-1 in trainingImg to Faces folder
+                        File.AppendAllText(Path.Combine(facesPath, "Faces.txt"), label[i - 1] + ",");   //Add name of i-1 in label to Faces.txt
                     }
-                    imgbShow.Image = trainedFace;
+                    imgbShow.Image = trainedFace;   //Show save image
                     imgbShow.Refresh();
                     MessageBox.Show(txtName.Text + " Added Successfully");
 
-                    trainedFace = null;
+                    trainedFace = null;   //Prepare for next face
                 }
                 else
                 {
                     MessageBox.Show("No face detected. Please try again.");
-                    imgbShow.Image = null;
+                    imgbShow.Image = null;   //Clear imageBox
                     imgbShow.Refresh();
 
                 }
@@ -150,26 +129,26 @@ namespace FaceDetection
             {
                 MessageBox.Show("Error: " + ex.Message);
             }
+            //-Summary : Capture face, add face and name to list, add list to folder
     }
 
         private void btnStart_Click(object sender, EventArgs e)
         {
             cam = new VideoCapture();
-            cam.QueryFrame();
-//EventHandler
-            Application.Idle += new EventHandler(FrameProcedure);
+            cam.QueryFrame();   //Start Webcam
+            Application.Idle += new EventHandler(FrameProcedure);   //Call FrameProcedure method
         }
 
         private void txtThreshold_TextChanged(object sender, EventArgs e)
         {
             if (txtThreshold.Text == "")
             {
-                txtThreshold.Text = ""+2;
+                txtThreshold.Text = ""+2;   //Set default threshold = 2(* 1000)
                 txtThreshold.SelectAll();
             }
             else
             {
-                confidenceThreshold = (double.Parse(txtThreshold.Text) * 1000.0);
+                confidenceThreshold = (double.Parse(txtThreshold.Text) * 1000.0);   //Set threshold to times 1000
 
             }
         }
@@ -256,15 +235,13 @@ namespace FaceDetection
                         dgvChecked.DataSource = table;
                         dgvChecked.Refresh();
                     }
-                    CvInvoke.PutText(frame, name, new Point(f.X - 2, f.Y - 2), FontFace.HersheyTriplex, 0.6, new MCvScalar(0, 0, 255), 1);
 
                 }
                 else
                 {
                     name = "";
-                    CvInvoke.PutText(frame, name, new Point(f.X - 2, f.Y - 2), FontFace.HersheyTriplex, 0.6, new MCvScalar(0, 0, 255), 1);
                 }
-                //CvInvoke.PutText(frame, name, new Point(f.X - 2, f.Y - 2), FontFace.HersheyTriplex, 0.6, new MCvScalar(0, 0, 255), 1);
+                CvInvoke.PutText(frame, name, new Point(f.X - 2, f.Y - 2), FontFace.HersheyTriplex, 0.6, new MCvScalar(0, 0, 255), 1);
             }
             imgbWebcam.Image = frame;
             name = "";
@@ -275,8 +252,8 @@ namespace FaceDetection
 
         private List<int> ConvertLabelsToInts(List<string> labels)
         {
-            var labelMapReverse = new Dictionary<string, int>();
-            var intLabels = new List<int>();
+            var labelMapReverse = new Dictionary<string, int>();   //Create Dictionary
+            var intLabels = new List<int>();   //Create list of integer
 
             int currentLabel = 0;
             foreach (var label in labels)
